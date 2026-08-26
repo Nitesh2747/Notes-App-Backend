@@ -1,8 +1,10 @@
 import express from 'express';
 import protect from '../middleware/auth.js';
-import { getPastes, createPaste, updatePaste, deletePaste } from '../controllers/pasteController.js';
+import { getPastes, createPaste, updatePaste, deletePaste, getPublicPaste } from '../controllers/pasteController.js';
 
 const router = express.Router();
+
+router.get('/public/:id', getPublicPaste); 
 
 router.use(protect);
 

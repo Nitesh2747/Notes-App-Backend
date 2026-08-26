@@ -35,6 +35,7 @@ export const updatePaste = async (req, res) => {
         }
         paste.title = req.body.title ?? paste.title;
         paste.content = req.body.content ?? paste.content;
+        paste.isPublic = req.body.isPublic ?? paste.isPublic;
         await paste.save();
         res.status(200).json(paste);
     }
@@ -53,6 +54,18 @@ export const deletePaste = async (req, res) => {
         res.status(200).json({ message: 'Paste deleted' });
     }
     catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+export const getPublicPaste = async (req, res) => {
+    try {
+        const paste = await Paste.findOne({ _id: req.params.id, isPublic: true });
+        if (!paste) {
+            return res.status(404).json({ message: 'Note not found or not shared' });
+        }
+        res.status(200).json(paste);
+    } catch (err) {
         res.status(500).json({ message: err.message });
     }
 };

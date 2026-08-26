@@ -14,6 +14,10 @@ const pasteSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
+  isPublic: {
+    type: Boolean,
+    default: false,
+  },
 }, { timestamps: true });
 
 export default mongoose.model('Paste', pasteSchema);
