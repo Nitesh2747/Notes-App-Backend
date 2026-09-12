@@ -18,6 +18,10 @@ const pasteSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  tags: {
+    type: [String],
+    default: [],
+  },
 }, { timestamps: true });
 
 export default mongoose.model('Paste', pasteSchema);

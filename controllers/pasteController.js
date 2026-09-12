@@ -1,31 +1,26 @@
 import Paste from '../models/PasteModel.js';
 
-
 export const getPastes = async (req, res) => {
     try {
         const pastes = await Paste.find({ owner: req.userId }).sort({ createdAt: -1 });
         res.status(200).json(pastes);
-    }
-    catch (err) {
+    } catch (err) {
         res.status(500).json({ message: err.message });
     }
 };
-
 
 export const createPaste = async (req, res) => {
     try {
-        const { title, content } = req.body;
+        const { title, content, tags } = req.body;
         if (!title || !content) {
             return res.status(400).json({ message: 'Title and content required' });
         }
-        const paste = await Paste.create({ title, content, owner: req.userId });
+        const paste = await Paste.create({ title, content, tags: tags || [], owner: req.userId });
         res.status(201).json(paste);
-    }
-    catch (err) {
+    } catch (err) {
         res.status(500).json({ message: err.message });
     }
 };
-
 
 export const updatePaste = async (req, res) => {
     try {
@@ -36,14 +31,13 @@ export const updatePaste = async (req, res) => {
         paste.title = req.body.title ?? paste.title;
         paste.content = req.body.content ?? paste.content;
         paste.isPublic = req.body.isPublic ?? paste.isPublic;
+        paste.tags = req.body.tags ?? paste.tags;
         await paste.save();
         res.status(200).json(paste);
-    }
-    catch (err) {
+    } catch (err) {
         res.status(500).json({ message: err.message });
     }
 };
-
 
 export const deletePaste = async (req, res) => {
     try {
@@ -52,8 +46,7 @@ export const deletePaste = async (req, res) => {
             return res.status(404).json({ message: 'Paste not found' });
         }
         res.status(200).json({ message: 'Paste deleted' });
-    }
-    catch (err) {
+    } catch (err) {
         res.status(500).json({ message: err.message });
     }
 };
