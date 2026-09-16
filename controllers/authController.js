@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User from '../models/UserModel.js';
+import Paste from '../models/PasteModel.js';
 
 function escapeRegex(str) {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -60,6 +61,33 @@ export const login = async (req, res) => {
         res.status(200).json({ token, username: user.username });
     }
     catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+export const deleteAccount = async (req, res) => {
+    try {
+        const { password } = req.body;
+
+        if (!password) {
+            return res.status(400).json({ message: 'Password required' });
+        }
+
+        const user = await User.findById(req.userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: 'Incorrect password' });
+        }
+
+        await Paste.deleteMany({ owner: req.userId });
+        await User.findByIdAndDelete(req.userId);
+
+        res.status(200).json({ message: 'Account deleted' });
+    } catch (err) {
         res.status(500).json({ message: err.message });
     }
 };
