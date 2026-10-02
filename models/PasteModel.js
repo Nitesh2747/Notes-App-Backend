@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const pasteSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true,
+    default: '',
   },
   content: {
     type: String,
