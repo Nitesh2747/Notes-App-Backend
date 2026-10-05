@@ -18,6 +18,10 @@ export const createPaste = async (req, res) => {
         const paste = await Paste.create({ title: title || '', content, tags: tags || [], owner: req.userId });
         res.status(201).json(paste);
     } catch (err) {
+        if (err.name === 'ValidationError') {
+            const firstError = Object.values(err.errors)[0].message;
+            return res.status(400).json({ message: firstError });
+        }
         res.status(500).json({ message: err.message });
     }
 };
@@ -35,6 +39,10 @@ export const updatePaste = async (req, res) => {
         await paste.save();
         res.status(200).json(paste);
     } catch (err) {
+        if (err.name === 'ValidationError') {
+            const firstError = Object.values(err.errors)[0].message;
+            return res.status(400).json({ message: firstError });
+        }
         res.status(500).json({ message: err.message });
     }
 };
